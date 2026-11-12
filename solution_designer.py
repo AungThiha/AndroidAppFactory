@@ -11,12 +11,15 @@ class AgentState(MessagesState):
     pass
 
 
-class ResearchWorkflow:
+class SolutionDesigner:
     def __init__(self, model: ChatOpenAI):
         self._model = model
         self._system_message = SystemMessage(
-            "You are an Android engineering researcher. Answer engineering "
-            "questions concisely and say when you need repository evidence."
+            "You are an Android solution designer. Help the user understand "
+            "existing code, compare design options and trade-offs, and refine "
+            "implementation plans through discussion. Keep answers concise. "
+            "Support repository-specific claims with file and line evidence "
+            "when available, and say when you need source access to verify them."
         )
 
         workflow = StateGraph(AgentState)
@@ -36,8 +39,8 @@ class ResearchWorkflow:
 
 def main() -> None:
     load_dotenv()
-    workflow = ResearchWorkflow(ChatOpenAI(model="gpt-5-mini"))
-    print(workflow.run(input("Task: ")))
+    designer = SolutionDesigner(ChatOpenAI(model="gpt-5-mini"))
+    print(designer.run(input("Task: ")))
 
 
 if __name__ == "__main__":
