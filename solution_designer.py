@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, MessagesState, StateGraph
+from langgraph.prebuilt import ToolNode, tools_condition
 
 from source_search import search_source
 
@@ -24,15 +25,19 @@ class SolutionDesigner:
 
         workflow = StateGraph(AgentState)
         workflow.add_node("respond", self._respond)
+        # Execute requested tools and append their results as ToolMessages.
+        workflow.add_node("search", ToolNode([search_source]))
         workflow.add_edge(START, "respond")
-        workflow.add_edge("respond", END)
+        # Search only when the model requests a tool; otherwise finish.
+        workflow.add_conditional_edges(
+            "respond", tools_condition, {"tools": "search", END: END}
+        )
+        workflow.add_edge("search", "respond")
         self._graph = workflow.compile()
 
     def run(self, task: str) -> str:
         state = self._graph.invoke({"messages": [HumanMessage(task)]})
         response = state["messages"][-1]
-        if response.tool_calls:
-            return f"Tool requests (not executed yet): {response.tool_calls}"
         return response.text
 
     def _respond(self, state: AgentState) -> AgentState:
