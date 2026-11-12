@@ -8,7 +8,7 @@ def main() -> None:
     For example, line 42 containing "  openProduct(id)" in Screen.kt
     becomes "Screen.kt:42:openProduct(id)". Line numbers start at 1.
     """
-    repository = Path("/Users/aungthiha/AndroidStudioProjects/StockMate")
+    repository = Path("/Users/aungthiha/AndroidStudioProjects/StockMate").resolve()
 
     # subprocess runs another program; here, Git lists tracked Kotlin files.
     result = subprocess.run(
@@ -22,8 +22,11 @@ def main() -> None:
     print(f"Found {len(source_paths)} tracked Kotlin files.")
 
     pattern = "SearchStockContent("
+    max_results = 20
+    result_count = 0
     for relative_path in source_paths:
-        source_file = repository / relative_path
+        # Resolve symlinks before checking that the file stays inside StockMate.
+        source_file = (repository / relative_path).resolve()
         source = source_file.read_text(encoding="utf-8")
         matches = [
             (line_number, line)
@@ -31,7 +34,11 @@ def main() -> None:
             if pattern in line
         ]
         for line_number, match in matches:
+            if result_count >= max_results:
+                print(f"Stopped after {max_results} matches; more matches exist.")
+                return
             print(f"{relative_path}:{line_number}:{match.strip()}")
+            result_count += 1
 
 
 if __name__ == "__main__":
