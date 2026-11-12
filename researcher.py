@@ -1,3 +1,6 @@
+import subprocess
+from pathlib import Path
+
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
@@ -8,7 +11,7 @@ class AgentState(MessagesState):
     pass
 
 
-class Agent:
+class ResearchWorkflow:
     def __init__(self, model: ChatOpenAI):
         self._model = model
         self._system_message = SystemMessage(
@@ -33,8 +36,8 @@ class Agent:
 
 def main() -> None:
     load_dotenv()
-    agent = Agent(ChatOpenAI(model="gpt-5-mini"))
-    print(agent.run(input("Task: ")))
+    workflow = ResearchWorkflow(ChatOpenAI(model="gpt-5-mini"))
+    print(workflow.run(input("Task: ")))
 
 
 if __name__ == "__main__":
