@@ -1,10 +1,9 @@
-import subprocess
-from pathlib import Path
-
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, MessagesState, StateGraph
+
+from source_search import search_source
 
 
 class AgentState(MessagesState):
@@ -13,7 +12,8 @@ class AgentState(MessagesState):
 
 class SolutionDesigner:
     def __init__(self, model: ChatOpenAI):
-        self._model = model
+        # Binding describes the tool to the model; it does not execute requests.
+        self._model = model.bind_tools([search_source])
         self._system_message = SystemMessage(
             "You are an Android solution designer. Help the user understand "
             "existing code, compare design options and trade-offs, and refine "
@@ -30,7 +30,10 @@ class SolutionDesigner:
 
     def run(self, task: str) -> str:
         state = self._graph.invoke({"messages": [HumanMessage(task)]})
-        return state["messages"][-1].text
+        response = state["messages"][-1]
+        if response.tool_calls:
+            return f"Tool requests (not executed yet): {response.tool_calls}"
+        return response.text
 
     def _respond(self, state: AgentState) -> AgentState:
         response = self._model.invoke([self._system_message, *state["messages"]])
