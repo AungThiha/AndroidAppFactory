@@ -37,3 +37,7 @@ google-services.json
 *.hprof
 
 .DS_Store
+
+# Python
+.venv/
+__pycache__/
