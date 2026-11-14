@@ -4,6 +4,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
+from source_read import read_sources
 from source_search import search_source
 
 
@@ -14,7 +15,8 @@ class AgentState(MessagesState):
 class SolutionDesigner:
     def __init__(self, model: ChatOpenAI):
         # Binding describes the tool to the model; it does not execute requests.
-        self._model = model.bind_tools([search_source])
+        tools = [search_source, read_sources]
+        self._model = model.bind_tools(tools)
         self._system_message = SystemMessage(
             "You are an Android solution designer. Help the user understand "
             "existing code, compare design options and trade-offs, and refine "
@@ -26,13 +28,14 @@ class SolutionDesigner:
         workflow = StateGraph(AgentState)
         workflow.add_node("respond", self._respond)
         # Execute requested tools and append their results as ToolMessages.
-        workflow.add_node("search", ToolNode([search_source]))
+        # Return input errors to the model so it can correct tool requests.
+        workflow.add_node("tools", ToolNode(tools, handle_tool_errors=(ValueError,)))
         workflow.add_edge(START, "respond")
-        # Search only when the model requests a tool; otherwise finish.
+        # Execute tools only when the model requests them; otherwise finish.
         workflow.add_conditional_edges(
-            "respond", tools_condition, {"tools": "search", END: END}
+            "respond", tools_condition, {"tools": "tools", END: END}
         )
-        workflow.add_edge("search", "respond")
+        workflow.add_edge("tools", "respond")
         self._graph = workflow.compile()
 
     def run(self, task: str) -> str:

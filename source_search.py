@@ -9,10 +9,11 @@ class SearchResult(TypedDict):
 
 
 def search_source(pattern: str) -> SearchResult:
-    """Search tracked Kotlin files in StockMate for literal text.
+    """Search tracked Kotlin files in StockMate for single-line literal text.
 
-    pattern is the only input: a case-sensitive substring of file contents,
+    pattern is the only input: a case-sensitive substring of one source line,
     not a filename, path, glob, or regular expression. No cursor is supported.
+    Newlines are not supported; search for a single-line fragment instead.
     This tool cannot open files or read surrounding lines. If matching lines
     identify plausible candidates, report them and any uncertainty requiring
     surrounding context instead of trying to open files through this tool.
@@ -25,6 +26,9 @@ def search_source(pattern: str) -> SearchResult:
     "  openProduct(id)" in Screen.kt returns
     {"matches": ["Screen.kt:42:openProduct(id)"], "message": None}.
     """
+    if "\n" in pattern or "\r" in pattern:
+        raise ValueError("Multiline patterns are not supported. Search for a single-line fragment instead.")
+
     repository = Path("/Users/aungthiha/AndroidStudioProjects/StockMate").resolve()
 
     # subprocess runs another program; here, Git lists tracked Kotlin files.
