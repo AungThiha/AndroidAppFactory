@@ -1,6 +1,9 @@
+import os
 import subprocess
 from pathlib import Path
 from typing import TypedDict
+
+from dotenv import load_dotenv
 
 
 class SearchResult(TypedDict):
@@ -9,7 +12,7 @@ class SearchResult(TypedDict):
 
 
 def search_source(pattern: str) -> SearchResult:
-    """Search tracked Kotlin files in StockMate for single-line literal text.
+    """Search tracked Kotlin files in the configured repository for single-line literal text.
 
     pattern is the only input: a case-sensitive substring of one source line,
     not a filename, path, glob, or regular expression. No cursor is supported.
@@ -29,12 +32,12 @@ def search_source(pattern: str) -> SearchResult:
     if "\n" in pattern or "\r" in pattern:
         raise ValueError("Multiline patterns are not supported. Search for a single-line fragment instead.")
 
-    repository = Path("/Users/aungthiha/AndroidStudioProjects/StockMate").resolve()
+    repository = Path(os.environ["REPOSITORY_PATH"]).expanduser().resolve()
 
     # subprocess runs another program; here, Git lists tracked Kotlin files.
     result = subprocess.run(
         ["git", "ls-files", "--", "*.kt"],
-        cwd=repository,  # Run inside StockMate (cwd stands for current working directory).
+        cwd=repository,  # Run inside the repository (cwd stands for current working directory).
         capture_output=True,  # Save normal/error output in stdout/stderr. stdout and stderr are not files
         text=True,  # Return captured output as strings instead of bytes.
         check=True,  # Raise an exception if Git exits with a nonzero status.
@@ -62,6 +65,7 @@ def search_source(pattern: str) -> SearchResult:
 
 
 def main() -> None:
+    load_dotenv()
     result = search_source("SearchStockContent(")
     for match in result["matches"]:
         print(match)

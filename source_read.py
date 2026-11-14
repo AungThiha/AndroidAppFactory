@@ -1,8 +1,6 @@
+import os
 from pathlib import Path
 from typing import TypedDict
-
-
-STOCKMATE_REPOSITORY = Path("/Users/aungthiha/AndroidStudioProjects/StockMate").resolve()
 
 
 class ReadResult(TypedDict):
@@ -11,7 +9,7 @@ class ReadResult(TypedDict):
 
 
 def read_sources(paths: list[str]) -> list[ReadResult]:
-    """Read 1 to 20 text files in StockMate.
+    """Read 1 to 20 text files in the configured repository.
 
     paths must be repository-relative, as returned by search. Return one object
     per path, in input order, containing only path and complete UTF-8 content.
@@ -21,11 +19,11 @@ def read_sources(paths: list[str]) -> list[ReadResult]:
     if not 1 <= len(paths) <= 20:
         raise ValueError("Provide 1 to 20 repository-relative file paths.")
 
-    repository = STOCKMATE_REPOSITORY
+    repository = Path(os.environ["REPOSITORY_PATH"]).expanduser().resolve()
     results: list[ReadResult] = []
     for path in paths:
         if Path(path).is_absolute():
-            raise ValueError("paths must be relative to the StockMate repository.")
+            raise ValueError("paths must be relative to the configured repository.")
         source_file = (repository / path).resolve()
         relative_path = source_file.relative_to(repository).as_posix()
         results.append({
