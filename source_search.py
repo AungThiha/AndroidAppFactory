@@ -11,6 +11,13 @@ class SearchResult(TypedDict):
 def search_source(pattern: str) -> SearchResult:
     """Search tracked Kotlin files in StockMate for literal text.
 
+    pattern is the only input: a case-sensitive substring of file contents,
+    not a filename, path, glob, or regular expression. No cursor is supported.
+    This tool cannot open files or read surrounding lines. If matching lines
+    identify plausible candidates, report them and any uncertainty requiring
+    surrounding context instead of trying to open files through this tool.
+    No matches means the text was not found, not that a file does not exist.
+
     Return at most 20 repository-relative path:line:code strings in matches.
     Set message when additional matches exist; otherwise it is None.
     Line numbers start at 1.
