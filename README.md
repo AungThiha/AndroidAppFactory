@@ -21,3 +21,17 @@ cp .env.example .env
 ```
 
 Set `OPENAI_API_KEY` in `.env` to your API key.
+
+## Run
+
+Set the repository path once per terminal session:
+
+```sh
+export REPOSITORY_PATH="/path/to/android-repository"
+```
+
+Run the solution designer and enter your task at the prompt:
+
+```sh
+python3 solution_designer.py
+```
