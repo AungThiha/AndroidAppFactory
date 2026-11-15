@@ -1,8 +1,14 @@
 # Android Development Workflow
 
-Requires Python 3 (`python3`). Run these commands from the project directory.
+Multi-agent Android development workflow using Python and LangGraph.
+
+## Requirements
+
+Python 3 (`python3`).
 
 ## Setup
+
+Run these commands from the project directory.
 
 ### 1. Install and activate dependencies
 
