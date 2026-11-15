@@ -39,11 +39,19 @@ slot becomes available. The three-worker limit applies across all selected agent
 ## Prepare each fixture
 
 Each worker copies only its case's fixture folder into a separate temporary
-directory. Run the eval from that directory.
+directory.
 
-Scope repository configuration to the worker's process. If the source tools
-enumerate Git-tracked files, initialize Git and stage the copied fixture files
-there; no commit is needed.
+Run the agent from the original project root using `.venv/bin/python`.
+
+Set `REPOSITORY_PATH` to the absolute path of the worker's temporary fixture directory
+for that invocation. For example, for Solution Designer:
+
+```sh
+REPOSITORY_PATH="/absolute/path/to/temporary/fixture" .venv/bin/python solution_designer.py
+```
+
+Each worker uses its own fixture path. The variable applies only to that agent
+process and its child processes.
 
 ## Report results
 
