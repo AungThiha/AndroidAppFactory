@@ -4,7 +4,7 @@ Multi-agent Android development workflow using Python and LangGraph.
 
 ## Requirements
 
-Python 3 (`python3`).
+Python 3.11 or newer (`python3`).
 
 ## Setup
 
@@ -16,7 +16,8 @@ Run these commands from the project directory.
 source ./setup.sh
 ```
 
-This creates a local `.venv`, installs `requirements.txt`, and activates it.
+This creates a local `.venv`, installs the exact dependency versions listed in
+`requirements.txt`, and activates it.
 
 ### 2. Configure the API key
 
