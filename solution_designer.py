@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.tracers.langchain import wait_for_all_tracers
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
@@ -58,8 +59,11 @@ compare design options and trade-offs, and refine implementation plans.
 
 def main() -> None:
     load_dotenv()
-    designer = SolutionDesigner(ChatOpenAI(model="gpt-5-mini"))
-    print(designer.run(input("Task: ")))
+    try:
+        designer = SolutionDesigner(ChatOpenAI(model="gpt-5-mini"))
+        print(designer.run(input("Task: ")))
+    finally:
+        wait_for_all_tracers()
 
 
 if __name__ == "__main__":
