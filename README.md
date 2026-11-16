@@ -29,6 +29,22 @@ cp .env.example .env
 
 Set `OPENAI_API_KEY` in `.env` to your API key.
 
+### 3. Configure LangSmith tracing
+
+In [LangSmith Cloud](https://smith.langchain.com), create a workspace-scoped
+service key and connect an existing agent with ID `solutiondesigner`.
+
+Copy the `LANGSMITH_*` settings from `.env.example` into your `.env`. 
+
+Set `LANGSMITH_API_KEY` to the service key and use the endpoint for your account's
+region (the example uses APAC). 
+
+Keep `LANGSMITH_AGENT_ENVIRONMENT=local`.
+
+Tracing starts automatically when you run the agent. 
+
+View runs under **SolutionDesigner → Local → Tracing**.
+
 ## Run
 
 Set the repository path once per terminal session:
