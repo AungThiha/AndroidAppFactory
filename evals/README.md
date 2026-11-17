@@ -20,7 +20,7 @@ For each selected agent, read:
 
 - `evals/{selected_agent_folder}/README.md`
 - The README for each selected case in
-  `evals/{selected_agent_folder}/test_cases/{case}/README.md`
+  `evals/{selected_agent_folder}/{case}/README.md`
 
 Each case folder contains:
 
@@ -53,7 +53,7 @@ Choose a fresh UUID as the run ID for each invocation, including retries. If the
 workspace already exists, choose a new run ID instead of reusing it.
 
 Copy the contents of the case's `fixture/` folder directly into `<run-id>/`,
-without an extra `fixture/` directory. For example, `evals/<agent>/test_cases/<case>/fixture/MainActivity.kt`
+without an extra `fixture/` directory. For example, `evals/<agent>/<case>/fixture/MainActivity.kt`
 becomes `eval-runs/<agent>/<case>/<run-id>/MainActivity.kt`.
 
 Each worker uses its own workspace. The project-root `eval-runs/` folder is
