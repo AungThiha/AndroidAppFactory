@@ -1,10 +1,14 @@
 """Run one eval case using its prompt.txt and `fixture/` inputs.
 
-Copy fixture contents directly into `eval-runs/<agent>/<case>/<uuid>/` and print
-the workspace path for review.
+Create a workspace folder at `eval-runs/<agent>/<case>/<uuid>/`.
+Copy fixture contents directly into the workspace and print the workspace path.
 
-The runner sets REPOSITORY_PATH to this workspace for the agent process.
-The agent script runs from the project root using the runner's Python interpreter.
+Set the `REPOSITORY_PATH` environment variable to the workspace.
+Set `TRACE_DIRECTORY` to the workspace's `traces/` folder, where the workflow
+writes its traces.
+
+The runner launches the agent from the project root with the same Python
+executable used to launch the runner.
 """
 
 import argparse
@@ -70,7 +74,11 @@ def main() -> None:
         input=prompt + "\n",
         text=True,
         cwd=project,
-        env={**os.environ, "REPOSITORY_PATH": str(workspace)},
+        env={
+            **os.environ,
+            "REPOSITORY_PATH": str(workspace),
+            "TRACE_DIRECTORY": str(workspace / "traces"),
+        },
     )
     sys.exit(result.returncode)
 

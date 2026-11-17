@@ -29,21 +29,15 @@ cp .env.example .env
 
 Set `OPENAI_API_KEY` in `.env` to your API key.
 
-### 3. Configure LangSmith tracing
+### 3. Local tracing
 
-In [LangSmith Cloud](https://smith.langchain.com), create a workspace-scoped
-service key and connect an existing agent with ID `solutiondesigner`.
+Runs save local JSON Lines traces in the project's Gitignored `traces/` folder.
+During eval runs, traces are saved under the run workspace, for example `eval-runs/solution_designer/stops_after_sufficient_evidence/<run-id>/traces/`; see the [eval README](evals/README.md) for more information.
 
-Copy the `LANGSMITH_*` settings from `.env.example` into your `.env`. 
+If you need another location for regular runs, set `TRACE_DIRECTORY` to the
+directory path.
 
-Set `LANGSMITH_API_KEY` to the service key and use the endpoint for your account's
-region (the example uses APAC). 
-
-Keep `LANGSMITH_AGENT_ENVIRONMENT=local`.
-
-Tracing starts automatically when you run the agent. 
-
-View runs under **SolutionDesigner → Local → Tracing**.
+Remote tracing is disabled, so no LangSmith key is required.
 
 ## Run
 

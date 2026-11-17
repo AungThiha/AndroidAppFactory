@@ -4,6 +4,7 @@ build/
 
 # Evaluation workspaces
 /eval-runs/
+/traces/
 
 # Local configuration file (sdk path, etc)
 local.properties

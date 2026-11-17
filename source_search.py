@@ -6,6 +6,8 @@ from typing import TypedDict
 
 from dotenv import load_dotenv
 
+from local_tracing import trace_directory
+
 
 class SearchResult(TypedDict):
     matches: list[str]
@@ -17,7 +19,8 @@ def search_source(pattern: str) -> SearchResult:
 
     If the project is a Git repository, search all text files in that repository,
     excluding untracked files. Skip Git metadata, binary files
-    and symbolic links leading outside the search root.
+    and symbolic links leading outside the search root. Exclude the configured
+    local trace directory so generated evidence cannot become source evidence.
 
     If the project is not a Git repository, search all text files in the configured project folder.
 
@@ -54,8 +57,10 @@ def search_source(pattern: str) -> SearchResult:
 
 def _matching_lines(root: Path, pattern: str) -> Iterator[str]:
     """Yield root-relative matches: '  render()' on line 2 → 'Screen.kt:2:render()'."""
+    traces = trace_directory()
     for source_file in _source_files(root):
-        if not source_file.resolve().is_relative_to(root):
+        resolved = source_file.resolve()
+        if not resolved.is_relative_to(root) or resolved.is_relative_to(traces):
             continue
         if not source_file.is_file():
             continue

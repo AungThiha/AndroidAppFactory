@@ -1,10 +1,13 @@
+from uuid import uuid4
+
 from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_core.tracers.langchain import wait_for_all_tracers
 from langchain_openai import ChatOpenAI
 from langgraph.graph import END, START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
+from langsmith import tracing_context
 
+from local_tracing import LocalTracer, trace_directory
 from source_read import read_sources
 from source_search import search_source
 
@@ -48,7 +51,15 @@ compare design options and trade-offs, and refine implementation plans.
         self._graph = workflow.compile()
 
     def run(self, task: str) -> str:
-        state = self._graph.invoke({"messages": [HumanMessage(task)]})
+        directory = trace_directory()
+        directory.mkdir(parents=True, exist_ok=True)
+        with (directory / f"{uuid4()}.jsonl").open("x", encoding="utf-8") as output:
+            # Override old .env tracing settings as well as process settings.
+            with tracing_context(enabled=False):
+                state = self._graph.invoke(
+                    {"messages": [HumanMessage(task)]},
+                    config={"callbacks": [LocalTracer(output)]},
+                )
         response = state["messages"][-1]
         return response.text
 
@@ -59,11 +70,8 @@ compare design options and trade-offs, and refine implementation plans.
 
 def main() -> None:
     load_dotenv()
-    try:
-        designer = SolutionDesigner(ChatOpenAI(model="gpt-5-mini"))
-        print(designer.run(input("Task: ")))
-    finally:
-        wait_for_all_tracers()
+    designer = SolutionDesigner(ChatOpenAI(model="gpt-5-mini"))
+    print(designer.run(input("Task: ")))
 
 
 if __name__ == "__main__":
