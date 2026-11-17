@@ -38,23 +38,33 @@ slot becomes available. The three-worker limit applies across all selected agent
 
 ## Prepare each fixture
 
-Each worker copies only its case's fixture folder into a separate temporary
-directory.
+Each worker creates a workspace under the project root:
+
+```text
+eval-runs/<agent>/<case>/<run-id>/
+```
+
+Use the agent folder name and case file name without `.md` from `evals/`.
+Choose a fresh UUID as the run ID for each invocation, including retries. If the
+workspace already exists, choose a new run ID instead of reusing it.
+
+Copy only the contents of the case's fixture folder into that workspace. Each
+worker uses its own workspace. The project-root `eval-runs/` folder is Gitignored.
 
 Run the agent from the original project root using `.venv/bin/python`.
 
-Set `REPOSITORY_PATH` to the absolute path of the worker's temporary fixture directory
+Set `REPOSITORY_PATH` to the absolute path of the worker's workspace
 for that invocation. For example, for Solution Designer:
 
 ```sh
-REPOSITORY_PATH="/absolute/path/to/temporary/fixture" .venv/bin/python solution_designer.py
+REPOSITORY_PATH="/absolute/path/to/project/eval-runs/solution_designer/stops_after_sufficient_evidence/<run-id>" .venv/bin/python solution_designer.py
 ```
 
-Each worker uses its own fixture path. The variable applies only to that agent
-process and its child processes.
+The variable applies only to that agent process and its child processes.
 
 ## Report results
 
-Collect each worker's results, then remove its temporary fixture copy. Summarize
-each selected case and its evidence in chat, distinguishing behavioral failures
-from execution errors. Do not create trace files or saved run snapshots.
+Collect each worker's results and retain its workspace for review, including after
+a failure or timeout. Summarize each selected case and its evidence in chat,
+distinguishing behavioral failures from execution errors. Do not create trace
+files or saved run snapshots.

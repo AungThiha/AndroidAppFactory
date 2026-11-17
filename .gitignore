@@ -2,6 +2,9 @@
 .gradle/
 build/
 
+# Evaluation workspaces
+/eval-runs/
+
 # Local configuration file (sdk path, etc)
 local.properties
 secrets.properties
