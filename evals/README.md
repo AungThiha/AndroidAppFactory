@@ -19,17 +19,21 @@ If the scope is unclear, ask before running. Do not assume all cases are request
 For each selected agent, read:
 
 - `evals/{selected_agent_folder}/README.md`
-- The selected case files in `evals/{selected_agent_folder}/test_cases/*.md`
+- The README for each selected case in
+  `evals/{selected_agent_folder}/test_cases/{case}/README.md`
 
-Each case file describes its prompts and grading criteria; its sibling folder
-with the same name contains the fixture.
+Each case folder contains:
+
+- `README.md`: run instructions and grading criteria.
+- `prompt.txt`: the prompt sent to the agent being evaluated.
+- `fixture/`: the source files copied into the run workspace.
 
 ## Assign workers
 
 The supervisor assigns one test case per worker, with at most three workers active
 across the entire request. Give the worker the paths to the agent's README and
-selected case file. The worker reads these instructions to learn how to run and
-grade the eval, then runs the agent with the case's test prompts. The prompts are
+selected case README. The worker reads these instructions to learn how to run and
+grade the eval, then runs the agent with the case's `prompt.txt`. The prompts are
 inputs to the agent being evaluated.
 
 After a worker reports its verdict and supporting evidence, terminate it. Never
@@ -44,12 +48,16 @@ Each worker creates a workspace under the project root:
 eval-runs/<agent>/<case>/<run-id>/
 ```
 
-Use the agent folder name and case file name without `.md` from `evals/`.
+Use the agent and case folder names from `evals/`.
 Choose a fresh UUID as the run ID for each invocation, including retries. If the
 workspace already exists, choose a new run ID instead of reusing it.
 
-Copy only the contents of the case's fixture folder into that workspace. Each
-worker uses its own workspace. The project-root `eval-runs/` folder is Gitignored.
+Copy the contents of the case's `fixture/` folder directly into `<run-id>/`,
+without an extra `fixture/` directory. For example, `evals/<agent>/test_cases/<case>/fixture/MainActivity.kt`
+becomes `eval-runs/<agent>/<case>/<run-id>/MainActivity.kt`.
+
+Each worker uses its own workspace. The project-root `eval-runs/` folder is
+Gitignored.
 
 Run the agent from the original project root using `.venv/bin/python`.
 
