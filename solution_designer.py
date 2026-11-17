@@ -53,7 +53,9 @@ compare design options and trade-offs, and refine implementation plans.
     def run(self, task: str) -> str:
         directory = trace_directory()
         directory.mkdir(parents=True, exist_ok=True)
-        with (directory / f"{uuid4()}.jsonl").open("x", encoding="utf-8") as output:
+        trace_path = directory / f"{uuid4()}.jsonl"
+        with trace_path.open("x", encoding="utf-8") as output:
+            print(f"Trace: {trace_path}", flush=True)
             # Override old .env tracing settings as well as process settings.
             with tracing_context(enabled=False):
                 state = self._graph.invoke(
