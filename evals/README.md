@@ -40,35 +40,14 @@ After a worker reports its verdict and supporting evidence, terminate it. Never
 reuse it for another case. Start a fresh worker for the next selected case as a
 slot becomes available. The three-worker limit applies across all selected agents.
 
-## Prepare each fixture
+## Run each case
 
-Each worker creates a workspace under the project root:
-
-```text
-eval-runs/<agent>/<case>/<run-id>/
-```
-
-Use the agent and case folder names from `evals/`.
-Choose a fresh UUID as the run ID for each invocation, including retries. If the
-workspace already exists, choose a new run ID instead of reusing it.
-
-Copy the contents of the case's `fixture/` folder directly into `<run-id>/`,
-without an extra `fixture/` directory. For example, `evals/<agent>/<case>/fixture/MainActivity.kt`
-becomes `eval-runs/<agent>/<case>/<run-id>/MainActivity.kt`.
-
-Each worker uses its own workspace. The project-root `eval-runs/` folder is
-Gitignored.
-
-Run the agent from the original project root using `.venv/bin/python`.
-
-Set `REPOSITORY_PATH` to the absolute path of the worker's workspace
-for that invocation. For example, for Solution Designer:
+From the project root, invoke the shared runner with the agent and case folder
+names. For example:
 
 ```sh
-REPOSITORY_PATH="/absolute/path/to/project/eval-runs/solution_designer/stops_after_sufficient_evidence/<run-id>" .venv/bin/python solution_designer.py
+.venv/bin/python evals/runner.py solution_designer stops_after_sufficient_evidence
 ```
-
-The variable applies only to that agent process and its child processes.
 
 ## Report results
 
