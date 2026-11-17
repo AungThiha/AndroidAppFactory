@@ -31,17 +31,25 @@ Set `OPENAI_API_KEY` in `.env` to your API key.
 
 ### 3. Configure tracing
 
-Runs save local JSON Lines traces in the project's Gitignored `traces/` folder.
-During eval runs, traces are saved under the run workspace, for example `eval-runs/solution_designer/stops_after_sufficient_evidence/<run-id>/traces/`; see the [eval README](evals/README.md) for more information.
+#### Local traces
 
-If you need another location for regular runs, set `TRACE_DIRECTORY` to the
-directory path.
+Runs save traces as JSON Lines files:
 
-If you want to view runs in [LangSmith](https://smith.langchain.com), copy the
-`LANGSMITH_*` settings from `.env.example` into `.env`. Use a workspace-scoped
-service key for `LANGSMITH_API_KEY` and your account's regional endpoint for
-`LANGSMITH_ENDPOINT` (the example uses APAC). Keep
-`LANGSMITH_AGENT_ENVIRONMENT=local`.
+- **Regular runs:** saved in the project's Gitignored `traces/` folder. Set
+  `TRACE_DIRECTORY` to use another directory.
+- **Eval runs:** saved in each run workspace's `traces/` folder. See the
+  [eval README](evals/README.md) for details.
+
+#### View runs in LangSmith (optional)
+
+Copy the `LANGSMITH_*` settings from `.env.example` into `.env` to view runs in
+[LangSmith](https://smith.langchain.com). Configure these values:
+
+| Setting | Value |
+| --- | --- |
+| `LANGSMITH_API_KEY` | A workspace-scoped service key |
+| `LANGSMITH_ENDPOINT` | Your account's regional endpoint; the example uses APAC |
+| `LANGSMITH_AGENT_ENVIRONMENT` | Keep `local` |
 
 ## Run
 
