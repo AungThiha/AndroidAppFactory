@@ -68,3 +68,10 @@ Collect each worker's results and retain its workspace for review, including aft
 a failure or timeout. Summarize each selected case and its evidence in chat,
 distinguishing behavioral failures from execution errors. Do not create trace
 files or saved run snapshots.
+
+## Clean up manually
+
+Do not clean up workspaces automatically. Keep run files and any workflow-produced
+traces after the evaluator reports its result so humans can inspect unexpected
+behavior. When review is complete, manually delete individual run directories or
+the entire `eval-runs/` folder.
