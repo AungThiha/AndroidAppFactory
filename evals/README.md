@@ -49,12 +49,18 @@ names. For example:
 .venv/bin/python evals/runner.py solution_designer stops_after_sufficient_evidence
 ```
 
+## Grade the local trace
+
+Grade each case against its rubric using only the workflow-produced `.jsonl`
+trace in the run workspace's `traces/` folder. Do not fetch remote traces or
+create separate trace files or saved run snapshots.
+
 ## Report results
 
 Collect each worker's results and retain its workspace for review, including after
 a failure or timeout. Summarize each selected case and its evidence in chat,
-distinguishing behavioral failures from execution errors. Do not create trace
-files or saved run snapshots.
+distinguishing behavioral failures from execution errors. Include the local trace
+path and cite span IDs for the evidence supporting each verdict.
 
 ## Clean up manually
 
