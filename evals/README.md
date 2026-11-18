@@ -1,6 +1,7 @@
 # Run evals
 
-The main Codex chat supervises the requested evals.
+The main Codex chat supervises the requested evals. The supervisor can use its
+chat history, previous runs, and prompt-tuning discussions to coordinate the work.
 
 Each subfolder represents an agent and matches its Python file in the project
 root. For example, `evals/solution_designer/` corresponds to `solution_designer.py`.
@@ -30,15 +31,16 @@ Each case folder contains:
 
 ## Assign workers
 
-The supervisor assigns one test case per worker, with at most three workers active
-across the entire request. Give the worker the paths to the agent's README and
-selected case README. The worker reads these instructions to learn how to run and
-grade the eval, then runs the agent with the case's `prompt.txt`. The prompts are
-inputs to the agent being evaluated.
+Start a fresh Codex worker for each case run with `fork_turns: "none"`. Keep at
+most three workers active across the entire request. Keep the supervisor's chat
+history, previous runs, and prompt-tuning discussions out of the worker prompt.
 
-After a worker reports its verdict and supporting evidence, terminate it. Never
-reuse it for another case. Start a fresh worker for the next selected case as a
-slot becomes available. The three-worker limit applies across all selected agents.
+Give the worker the assigned case, the paths to this README and the agent and
+case READMEs, and any settings needed for that run. The worker reads those
+instructions, runs the agent with the case's `prompt.txt`, and grades the trace
+from that run.
+
+Terminate the worker after it reports its verdict and supporting evidence.
 
 ## Run each case
 
