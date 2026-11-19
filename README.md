@@ -38,7 +38,7 @@ Runs save traces as JSON Lines files:
 - **Regular runs:** saved in the project's Gitignored `traces/` folder. Set
   `TRACE_DIRECTORY` to use another directory.
 - **Eval runs:** saved in each run workspace's `traces/` folder. See the
-  [eval README](evals/README.md) for details.
+  [evaluator instructions](evals/evaluator.md) for details.
 
 #### View runs in LangSmith (optional)
 

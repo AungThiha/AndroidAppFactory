@@ -9,6 +9,10 @@ writes its traces.
 
 The runner launches the agent from the project root with the same Python
 executable used to launch the runner.
+
+After the agent exits, the runner prints the path of each `.jsonl` file in the
+trace directory and exits with the agent's exit code. The agent's stderr stays
+visible in the terminal so errors before tracing starts can still be diagnosed.
 """
 
 import argparse
@@ -68,18 +72,23 @@ def main() -> None:
     prompt = _read_prompt(case / "prompt.txt")
 
     workspace = _prepare_workspace(project, args.agent, args.case)
+    trace_directory = workspace / "traces"
     print(f"Workspace: {workspace}", flush=True)
     result = subprocess.run(
         [sys.executable, str(script)],
         input=prompt + "\n",
         text=True,
+        # The trace already contains the answer the evaluator will grade.
+        stdout=subprocess.DEVNULL,
         cwd=project,
         env={
             **os.environ,
             "REPOSITORY_PATH": str(workspace),
-            "TRACE_DIRECTORY": str(workspace / "traces"),
+            "TRACE_DIRECTORY": str(trace_directory),
         },
     )
+    for trace in sorted(trace_directory.glob("*.jsonl")):
+        print(f"Trace: {trace}")
     sys.exit(result.returncode)
 
 

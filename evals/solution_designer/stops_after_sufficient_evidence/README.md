@@ -6,7 +6,7 @@ no Android project setup or compilation is needed.
 
 ## Run
 
-Follow `evals/README.md` to run.
+Follow the [shared evaluator instructions](../../evaluator.md).
 
 ## Rubric checks
 
